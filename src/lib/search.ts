@@ -60,12 +60,12 @@ function extractExcerpt(content: string, query: string, maxLength = 150): string
   const index = lowerContent.indexOf(lowerQuery);
 
   if (index === -1) {
-    return content.slice(0, maxLength).replace(/[#*_\[\]]/g, "") + "...";
+    return content.slice(0, maxLength).replace(/[#*_[\]]/g, "") + "...";
   }
 
   const start = Math.max(0, index - 50);
   const end = Math.min(content.length, index + query.length + 100);
-  let excerpt = content.slice(start, end).replace(/[#*_\[\]]/g, "");
+  let excerpt = content.slice(start, end).replace(/[#*_[\]]/g, "");
 
   if (start > 0) excerpt = "..." + excerpt;
   if (end < content.length) excerpt = excerpt + "...";
