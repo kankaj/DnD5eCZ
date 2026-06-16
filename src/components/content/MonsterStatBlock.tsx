@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 
-interface MonsterStatBlockProps {
+export interface MonsterStatBlockProps {
   title: string;
   subtitle?: string;
   "armor-class"?: string;
