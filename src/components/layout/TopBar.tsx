@@ -33,9 +33,10 @@ export function TopBar({
           <Input
             placeholder="Hledat..."
             value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onFocus={onSearchFocus}
-            className="pl-8"
+            readOnly
+            onPointerDown={(e) => e.preventDefault()}
+            onClick={() => onSearchFocus?.()}
+            className="pl-8 cursor-pointer"
           />
         </div>
       )}

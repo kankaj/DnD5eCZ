@@ -19,11 +19,17 @@ function CategoryRoute({
   categories: Category[];
 }) {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const category = categories.find((c) => c.slug === slug);
   const entries = slug ? getEntriesByCategory(slug) : [];
 
   if (!category) return <div className="p-4">Kategorie nenalezena</div>;
-  return <CategoryPage category={category} entries={entries} />;
+  return (
+    <>
+      <TopBar title={category.name} showBack onBack={() => navigate(-1)} />
+      <CategoryPage entries={entries} />
+    </>
+  );
 }
 
 function ContentRoute({
@@ -31,7 +37,8 @@ function ContentRoute({
 }: {
   getEntryById: (id: string) => ContentEntry | undefined;
 }) {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ '*': string }>();
+  const id = params['*'];
   const navigate = useNavigate();
   const entry = id ? getEntryById(id) : undefined;
 
@@ -95,7 +102,7 @@ function AppContent() {
             }
           />
           <Route
-            path="/content/:id"
+            path="/content/*"
             element={<ContentRoute getEntryById={getEntryById} />}
           />
         </Routes>

@@ -3,10 +3,10 @@ import type { ContentEntry, SearchResult } from "@/types/content";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let searchIndex: Document<any> | null = null;
-let indexedEntries: ContentEntry[] = [];
+let entryMap = new Map<string, ContentEntry>();
 
 export function buildSearchIndex(entries: ContentEntry[]) {
-  indexedEntries = entries;
+  entryMap = new Map(entries.map((e) => [e.id, e]));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   searchIndex = new Document<any>({
@@ -15,7 +15,6 @@ export function buildSearchIndex(entries: ContentEntry[]) {
       index: ["title", "content"],
     },
     tokenize: "forward",
-    cache: true,
   });
 
   for (const entry of entries) {
@@ -26,26 +25,25 @@ export function buildSearchIndex(entries: ContentEntry[]) {
 export function search(query: string, limit = 20): SearchResult[] {
   if (!searchIndex || !query.trim()) return [];
 
-  const results = searchIndex.search(query, {
-    limit,
-    enrich: true,
-  });
+  const results = searchIndex.search(query, { limit });
 
   const seen = new Set<string>();
   const searchResults: SearchResult[] = [];
 
   for (const resultGroup of results) {
-    for (const item of resultGroup.result) {
-      const entry = item.doc ?? indexedEntries.find((e) => e.id === item.id);
-      if (!entry || seen.has(String(item.id))) continue;
-      seen.add(String(item.id));
+    for (const id of resultGroup.result) {
+      const key = String(id);
+      if (seen.has(key)) continue;
+      seen.add(key);
 
-      const excerpt = extractExcerpt(entry.content, query);
+      const entry = entryMap.get(key);
+      if (!entry) continue;
+
       searchResults.push({
         id: entry.id,
         title: entry.title,
         category: entry.category,
-        excerpt,
+        excerpt: extractExcerpt(entry.content, query),
         score: 0,
       });
     }

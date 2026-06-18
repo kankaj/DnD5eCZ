@@ -21,7 +21,6 @@ const SNIPPET_CATEGORY_MAP: Record<string, { name: string; description: string }
 export async function loadContentManifest(): Promise<ContentManifest> {
   const modules = import.meta.glob<{ default: string }>("/src/files/**/*.md", {
     query: "?raw",
-    import: "default",
     eager: true,
   });
 
