@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MemoryRouter, Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { MemoryRouter, Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
 import { TopBar } from "@/components/layout/TopBar";
 import { SearchDialog } from "@/components/search/SearchDialog";
@@ -40,6 +40,8 @@ function ContentRoute({
   const params = useParams<{ '*': string }>();
   const id = params['*'];
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as { searchQuery?: string } | null;
   const entry = id ? getEntryById(id) : undefined;
 
   if (!entry) return <div className="p-4">Záznam nenalezen</div>;
@@ -47,14 +49,14 @@ function ContentRoute({
   return (
     <>
       <TopBar title={entry.title} showBack onBack={() => navigate(-1)} />
-      <ContentPage entry={entry} />
+      <ContentPage entry={entry} searchQuery={locationState?.searchQuery} />
     </>
   );
 }
 
 function AppContent() {
   const { categories, entries, loading, getEntriesByCategory, getEntryById } = useContent();
-  const { results, search, clear } = useSearch(entries);
+  const { query, results, search, clear } = useSearch(entries);
   const [searchOpen, setSearchOpen] = useState(false);
   const theme = useOwlBearTheme();
 
@@ -89,7 +91,7 @@ function AppContent() {
         onSearchChange={() => setSearchOpen(true)}
         onSearchFocus={() => setSearchOpen(true)}
       />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <Routes>
           <Route path="/" element={<HomePage categories={categories} />} />
           <Route
@@ -113,6 +115,7 @@ function AppContent() {
           setSearchOpen(open);
           if (!open) clear();
         }}
+        query={query}
         results={results}
         onSearch={search}
       />

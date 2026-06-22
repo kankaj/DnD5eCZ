@@ -14,6 +14,7 @@ import type { SearchResult } from "@/types/content";
 interface SearchDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  query: string;
   results: SearchResult[];
   onSearch: (query: string) => void;
 }
@@ -21,6 +22,7 @@ interface SearchDialogProps {
 export function SearchDialog({
   open,
   onOpenChange,
+  query,
   results,
   onSearch,
 }: SearchDialogProps) {
@@ -53,7 +55,9 @@ export function SearchDialog({
                 value={result.title}
                 className="items-start py-2"
                 onSelect={() => {
-                  navigate(`/content/${result.id}`);
+                  navigate(`/content/${result.id}`, {
+                    state: { searchQuery: query.trim() },
+                  });
                   onOpenChange(false);
                 }}
               >

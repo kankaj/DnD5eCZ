@@ -20,7 +20,7 @@ export function TopBar({
   onSearchFocus,
 }: TopBarProps) {
   return (
-    <div className="flex items-center gap-2 border-b p-3">
+    <div className="flex shrink-0 items-center gap-2 border-b p-3">
       {showBack && (
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" />

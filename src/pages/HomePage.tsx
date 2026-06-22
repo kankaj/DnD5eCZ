@@ -11,7 +11,7 @@ export function HomePage({ categories }: HomePageProps) {
   const navigate = useNavigate();
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="min-h-0 flex-1">
       <div className="p-4">
         <div className="grid gap-3">
           {categories.map((category) => (

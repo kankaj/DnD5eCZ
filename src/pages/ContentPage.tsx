@@ -4,12 +4,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ContentPageProps {
   entry: ContentEntry;
+  searchQuery?: string;
 }
 
-export function ContentPage({ entry }: ContentPageProps) {
+export function ContentPage({ entry, searchQuery }: ContentPageProps) {
   return (
-    <ScrollArea className="h-full">
-      <MarkdownRenderer content={entry.content} />
+    <ScrollArea className="min-h-0 flex-1">
+      <MarkdownRenderer content={entry.content} searchQuery={searchQuery} />
     </ScrollArea>
   );
 }

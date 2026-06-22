@@ -10,7 +10,7 @@ export function CategoryPage({ entries }: Readonly<CategoryPageProps>) {
   const navigate = useNavigate();
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="min-h-0 flex-1">
       <div className="p-4">
         <div className="space-y-1">
           {entries.map((entry) => (
