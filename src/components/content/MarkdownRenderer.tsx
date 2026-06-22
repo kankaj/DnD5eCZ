@@ -13,9 +13,20 @@ interface MarkdownRendererProps {
   searchQuery?: string;
 }
 
-function parseMonsterProps(match: RegExpMatchArray): Record<string, string> {
+function markdownToHtml(markdown: string): string {
+  const result = unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeStringify)
+    .processSync(markdown);
+
+  return String(result);
+}
+
+function parseMonsterProps(propsStr: string): Record<string, string> {
   const props: Record<string, string> = {};
-  const propsStr = match[1];
   const propRegex = /(\w+(?:-\w+)*)="([^"]*)"/g;
   let propMatch;
   while ((propMatch = propRegex.exec(propsStr)) !== null) {
@@ -91,30 +102,31 @@ export function MarkdownRenderer({ content, searchQuery }: MarkdownRendererProps
   const contentRef = useRef<HTMLDivElement>(null);
   const { html, monsters } = useMemo(() => {
     const monsterMatches: Array<{ id: number; props: Record<string, string> }> = [];
-    let processedContent = content;
     let monsterId = 0;
 
-    const monsterRegex = /<Monster\s+([^>]+)\/>/g;
-    let match;
-    while ((match = monsterRegex.exec(content)) !== null) {
-      const props = parseMonsterProps(match);
-      monsterMatches.push({ id: monsterId, props });
-      processedContent = processedContent.replace(
-        match[0],
-        `<div data-monster-id="${monsterId}"></div>`
-      );
-      monsterId++;
-    }
+    let processedContent = content.replace(
+      /<Monster\s+([^>]*?)>([\s\S]*?)<\/Monster>/g,
+      (_fullMatch, propsStr: string, body: string) => {
+        monsterMatches.push({
+          id: monsterId,
+          props: {
+            ...parseMonsterProps(propsStr),
+            bodyHtml: markdownToHtml(body.trim()),
+          },
+        });
+        return `<div data-monster-id="${monsterId++}"></div>`;
+      }
+    );
 
-    const result = unified()
-      .use(remarkParse)
-      .use(remarkGfm)
-      .use(remarkRehype, { allowDangerousHtml: true })
-      .use(rehypeRaw)
-      .use(rehypeStringify)
-      .processSync(processedContent);
+    processedContent = processedContent.replace(/<Monster\s+([^>]*?)\/>/g, (_fullMatch, propsStr: string) => {
+      monsterMatches.push({
+        id: monsterId,
+        props: parseMonsterProps(propsStr),
+      });
+      return `<div data-monster-id="${monsterId++}"></div>`;
+    });
 
-    return { html: String(result), monsters: monsterMatches };
+    return { html: markdownToHtml(processedContent), monsters: monsterMatches };
   }, [content]);
 
   const parts = html.split(/<div data-monster-id="(\d+)"><\/div>/);

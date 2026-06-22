@@ -277,3 +277,46 @@
   background: oklch(0.55 0.15 90);
   color: oklch(0.98 0.03 90);
 }
+
+.markdown-content .monster-stat-block {
+  color: oklch(0.32 0.11 28);
+}
+
+.dark .markdown-content .monster-stat-block {
+  color: oklch(0.9 0.08 55);
+}
+
+.markdown-content .monster-stat-block h3 {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  color: oklch(0.32 0.11 28);
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+
+.dark .markdown-content .monster-stat-block h3 {
+  color: oklch(0.82 0.12 40);
+}
+
+.markdown-content .monster-stat-block p {
+  margin-top: 0.25rem;
+}
+
+.markdown-content .monster-stat-body h5,
+.markdown-content .monster-stat-body h6 {
+  margin-top: 1rem;
+  color: oklch(0.12 0 0);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.dark .markdown-content .monster-stat-body h5,
+.dark .markdown-content .monster-stat-body h6 {
+  color: oklch(0.96 0 0);
+}
+
+.markdown-content .monster-stat-body p {
+  margin-top: 0.65rem;
+}

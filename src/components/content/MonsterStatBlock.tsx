@@ -21,6 +21,7 @@ export interface MonsterStatBlockProps {
   senses?: string;
   languages?: string;
   challenge?: string;
+  bodyHtml?: string;
 }
 
 export function MonsterStatBlock(props: MonsterStatBlockProps) {
@@ -45,10 +46,11 @@ export function MonsterStatBlock(props: MonsterStatBlockProps) {
     senses,
     languages,
     challenge,
+    bodyHtml,
   } = props;
 
   return (
-    <div className="my-4 rounded-lg border-2 border-red-800 bg-amber-50 p-4 dark:bg-amber-950/20">
+    <div className="monster-stat-block my-4 rounded-lg border-2 border-red-800 bg-amber-50 p-4 dark:bg-amber-950/20">
       <h3 className="text-xl font-bold text-red-800 dark:text-red-400">{title}</h3>
       {subtitle && <p className="italic text-muted-foreground">{subtitle}</p>}
 
@@ -102,6 +104,16 @@ export function MonsterStatBlock(props: MonsterStatBlockProps) {
         {languages && <p><strong>Jazyky:</strong> {languages}</p>}
         {challenge && <p><strong>Nebezpečnost:</strong> {challenge}</p>}
       </div>
+
+      {bodyHtml && (
+        <>
+          <Separator className="my-2 bg-red-800" />
+          <div
+            className="monster-stat-body"
+            dangerouslySetInnerHTML={{ __html: bodyHtml }}
+          />
+        </>
+      )}
     </div>
   );
 }
