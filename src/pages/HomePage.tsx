@@ -13,7 +13,6 @@ export function HomePage({ categories }: HomePageProps) {
   return (
     <ScrollArea className="h-full">
       <div className="p-4">
-        <h1 className="mb-4 text-2xl font-bold">DnD5e CZ</h1>
         <div className="grid gap-3">
           {categories.map((category) => (
             <Card
