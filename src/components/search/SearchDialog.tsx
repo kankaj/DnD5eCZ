@@ -8,6 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { getCategoryInfo } from "@/lib/content";
 import type { SearchResult } from "@/types/content";
 
 interface SearchDialogProps {
@@ -45,7 +46,7 @@ export function SearchDialog({
       <CommandList>
         <CommandEmpty>Žádné výsledky</CommandEmpty>
         {Object.entries(groupedResults).map(([category, items]) => (
-          <CommandGroup key={category} heading={category}>
+          <CommandGroup key={category} heading={getCategoryInfo(category).name}>
             {items.map((result) => (
               <CommandItem
                 key={result.id}

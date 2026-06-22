@@ -1,22 +1,34 @@
 import type { ContentEntry, Category, ContentManifest } from "@/types/content";
 
-const CATEGORY_MAP: Record<string, { name: string; description: string }> = {
+const CATEGORY_INFO: Record<string, { name: string; description: string }> = {
   bestiar: { name: "Bestiář", description: "Nestvůry a tvorové" },
-  "prirucka-hrace": { name: "Příručka hráče", description: "Základní pravidla" },
-  "pruvodce-pana-jeskyne": { name: "Průvodce Pána jeskyně", description: "Rady pro PJ" },
-  "jeskyne-a-draci": { name: "Jeskyně a draci", description: "Doplněk" },
-  "jeskyne-a-draci-doplnky": { name: "Jeskyně a draci - doplňky", description: "Další obsah" },
-  tasha: { name: "Tasha", description: "Tasha's Cauldron of Everything" },
-  xanathar: { name: "Xanathar", description: "Xanathar's Guide to Everything" },
-  "voluv-pruvodce-netvory": { name: "Volo's Guide to Monsters", description: "Rozšířený bestiář" },
-  "dobrodruhuv-pruvodce": { name: "Dobrodruhův průvodce", description: "Průvodce" },
+  "dobrodruhuv-pruvodce": { name: "Dobrodruhův Průvodce", description: "Průvodce pro dobrodruhy" },
+  "jeskyne-a-draci": { name: "Jeskyně a Draci", description: "Základní pravidla Jeskyní a draků" },
+  "jeskyne-a-draci-doplnky": { name: "Jeskyně a Draci - Doplňky", description: "Doplňující obsah" },
+  kouzla: { name: "Kouzla", description: "Seznam kouzel" },
+  obory: { name: "Obory", description: "Podtřídy a specializace" },
+  povolani: { name: "Povolání", description: "Třídy postav" },
+  "prirucka-hrace": { name: "Příručka Hráče", description: "Základní pravidla pro hráče" },
+  "pruvodce-pana-jeskyne": { name: "Průvodce Pána Jeskyně", description: "Rady pro Pána jeskyně" },
+  tasha: { name: "Tašin Kotlík Všeho", description: "Tasha's Cauldron of Everything" },
+  "voluv-pruvodce-netvory": { name: "Volův Průvodce Netvory", description: "Rozšířený bestiář" },
+  xanathar: { name: "Xanatharův Průvodce Vším", description: "Xanathar's Guide to Everything" },
 };
 
-const SNIPPET_CATEGORY_MAP: Record<string, { name: string; description: string }> = {
-  kouzla: { name: "Kouzla", description: "Seznam kouzel" },
-  povolani: { name: "Povolání", description: "Třídy postav" },
-  obory: { name: "Obory", description: "Podtřídy a specializace" },
-};
+export function getCategoryInfo(slug: string): { name: string; description: string } {
+  return CATEGORY_INFO[slug] || {
+    name: formatSlugName(slug),
+    description: "",
+  };
+}
+
+function formatSlugName(slug: string): string {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toLocaleUpperCase("cs") + word.slice(1))
+    .join(" ");
+}
 
 export async function loadContentManifest(): Promise<ContentManifest> {
   const modules = import.meta.glob<{ default: string }>("/src/files/**/*.md", {
@@ -63,10 +75,7 @@ export async function loadContentManifest(): Promise<ContentManifest> {
   const categories: Category[] = [];
 
   for (const [slug, count] of Object.entries(categoryCounts)) {
-    const info = CATEGORY_MAP[slug] || SNIPPET_CATEGORY_MAP[slug] || {
-      name: slug,
-      description: "",
-    };
+    const info = getCategoryInfo(slug);
     categories.push({
       id: slug,
       slug,
