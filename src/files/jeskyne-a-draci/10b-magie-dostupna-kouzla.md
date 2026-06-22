@@ -1,3 +1,5 @@
+# Dostupná kouzla
+
 ### Dostupná kouzla Povolání
 
 | Bardská kouzla | Čarodějská kouzla | Černokněžnická kouzla  | Druidská kouzla | Klerická kouzla | Kouzelnická kouzla |

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import rehypeRaw from "rehype-raw";
@@ -42,6 +43,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     const result = unified()
       .use(remarkParse)
+      .use(remarkGfm)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw)
       .use(rehypeStringify)
@@ -53,7 +55,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const parts = html.split(/<div data-monster-id="(\d+)"><\/div>/);
 
   return (
-    <div className="max-w-none space-y-4 p-4 text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+    <div className="markdown-content max-w-none p-4 text-sm leading-relaxed text-foreground">
       {parts.map((part, index) => {
         if (index % 2 === 1) {
           const monsterId = parseInt(part);

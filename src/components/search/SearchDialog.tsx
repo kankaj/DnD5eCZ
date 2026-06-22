@@ -50,13 +50,21 @@ export function SearchDialog({
               <CommandItem
                 key={result.id}
                 value={result.title}
+                className="items-start py-2"
                 onSelect={() => {
                   navigate(`/content/${result.id}`);
                   onOpenChange(false);
                 }}
               >
-                <Search className="mr-2 h-4 w-4" />
-                <span>{result.title}</span>
+                <Search className="mt-0.5 h-4 w-4" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-medium">{result.title}</span>
+                  {result.excerpt && (
+                    <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">
+                      {result.excerpt}
+                    </span>
+                  )}
+                </span>
               </CommandItem>
             ))}
           </CommandGroup>

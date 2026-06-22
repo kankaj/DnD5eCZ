@@ -12,20 +12,25 @@ export function buildSearchIndex(entries: ContentEntry[]) {
   searchIndex = new Document<any>({
     document: {
       id: "id",
-      index: ["title", "content"],
+      index: ["title", "searchTitle", "searchContent"],
     },
     tokenize: "forward",
   });
 
   for (const entry of entries) {
-    searchIndex.add(entry);
+    searchIndex.add({
+      ...entry,
+      searchTitle: normalizeSearchText(entry.title),
+      searchContent: normalizeSearchText(markdownToSearchText(entry.content)),
+    });
   }
 }
 
 export function search(query: string, limit = 20): SearchResult[] {
   if (!searchIndex || !query.trim()) return [];
 
-  const results = searchIndex.search(query, { limit });
+  const normalizedQuery = normalizeSearchText(query);
+  const results = searchIndex.search(normalizedQuery, { limit });
 
   const seen = new Set<string>();
   const searchResults: SearchResult[] = [];
@@ -43,7 +48,7 @@ export function search(query: string, limit = 20): SearchResult[] {
         id: entry.id,
         title: entry.title,
         category: entry.category,
-        excerpt: extractExcerpt(entry.content, query),
+        excerpt: extractExcerpt(entry.content, normalizedQuery),
         score: 0,
       });
     }
@@ -52,21 +57,70 @@ export function search(query: string, limit = 20): SearchResult[] {
   return searchResults.slice(0, limit);
 }
 
-function extractExcerpt(content: string, query: string, maxLength = 150): string {
-  const lowerContent = content.toLowerCase();
-  const lowerQuery = query.toLowerCase();
-  const index = lowerContent.indexOf(lowerQuery);
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+}
 
-  if (index === -1) {
-    return content.slice(0, maxLength).replace(/[#*_[\]]/g, "") + "...";
+function markdownToSearchText(markdown: string): string {
+  return markdown
+    .replace(/<Monster\s+([^>]+)\/>/g, " $1 ")
+    .replace(/(\w+(?:-\w+)*)="([^"]*)"/g, " $2 ")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^>\s?/gm, "")
+    .replace(/^[\s>*-]*\|/gm, "|")
+    .replace(/[|*_~>#()[\]{}\\]/g, " ")
+    .replaceAll("[", " ")
+    .replace(/^-{3,}$/gm, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractExcerpt(content: string, normalizedQuery: string, maxLength = 180): string {
+  const matchingLine = findMatchingLine(content, normalizedQuery);
+
+  if (matchingLine) {
+    return excerptFromLine(matchingLine, normalizedQuery, maxLength);
   }
 
-  const start = Math.max(0, index - 50);
-  const end = Math.min(content.length, index + query.length + 100);
-  let excerpt = content.slice(start, end).replace(/[#*_[\]]/g, "");
+  const plainText = markdownToSearchText(content);
+
+  return truncateExcerpt(plainText, maxLength);
+}
+
+function findMatchingLine(content: string, normalizedQuery: string): string | undefined {
+  return content
+    .split(/\r?\n/)
+    .map(markdownToSearchText)
+    .find((line) => normalizeSearchText(line).includes(normalizedQuery));
+}
+
+function excerptFromLine(line: string, normalizedQuery: string, maxLength: number): string {
+  if (line.length <= maxLength) return line;
+
+  const normalizedLine = normalizeSearchText(line);
+  const index = normalizedLine.indexOf(normalizedQuery);
+
+  if (index === -1) return truncateExcerpt(line, maxLength);
+
+  const contextLength = Math.max(30, Math.floor((maxLength - normalizedQuery.length) / 2));
+  const start = Math.max(0, index - contextLength);
+  const end = Math.min(line.length, index + normalizedQuery.length + contextLength);
+  let excerpt = line.slice(start, end).trim();
 
   if (start > 0) excerpt = "..." + excerpt;
-  if (end < content.length) excerpt = excerpt + "...";
+  if (end < line.length) excerpt = excerpt + "...";
 
   return excerpt;
+}
+
+function truncateExcerpt(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}...`;
 }

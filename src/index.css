@@ -128,3 +128,140 @@
     @apply font-sans;
     }
 }
+
+.markdown-content {
+  color: var(--foreground);
+}
+
+.markdown-content > * + *,
+.markdown-content div > * + * {
+  margin-top: 0.75rem;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  color: var(--foreground);
+  font-weight: 700;
+  line-height: 1.2;
+  scroll-margin-top: 1rem;
+}
+
+.markdown-content h1 {
+  margin-top: 0;
+  font-size: 1.75rem;
+}
+
+.markdown-content h2 {
+  margin-top: 1.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.35rem;
+}
+
+.markdown-content h3 {
+  margin-top: 1.25rem;
+  font-size: 1.1rem;
+}
+
+.markdown-content h4 {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.markdown-content p {
+  margin-top: 0.75rem;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-top: 0.75rem;
+  padding-left: 1.4rem;
+}
+
+.markdown-content ul {
+  list-style: disc;
+}
+
+.markdown-content ol {
+  list-style: decimal;
+}
+
+.markdown-content li + li {
+  margin-top: 0.25rem;
+}
+
+.markdown-content strong {
+  font-weight: 700;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.markdown-content blockquote {
+  margin-top: 1rem;
+  border-left: 3px solid var(--border);
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.markdown-content code {
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.1rem 0.3rem;
+  font-size: 0.9em;
+}
+
+.markdown-content pre {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: var(--muted);
+  padding: 0.75rem;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.markdown-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown-content th {
+  background: var(--muted);
+  font-weight: 700;
+}
+
+.markdown-content tr:nth-child(even) td {
+  background: color-mix(in oklch, var(--muted) 45%, transparent);
+}
+
+.markdown-content hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}

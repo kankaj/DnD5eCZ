@@ -33,7 +33,7 @@ export async function loadContentManifest(): Promise<ContentManifest> {
     if (!pathMatch) continue;
 
     const [, categoryDir, filename] = pathMatch;
-    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const titleMatch = content.match(/^\s*#{1,2}\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1].trim() : filename;
 
     let category = categoryDir;
