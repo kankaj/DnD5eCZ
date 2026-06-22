@@ -1,13 +1,13 @@
 {
-  "name": "DnD5e CZ",
+  "name": "DnD5eCZ",
   "version": "1.0.0",
   "manifest_version": 1,
   "author": "Jaroslav Kaňka",
   "action": {
-    "title": "DnD5e CZ",
+    "title": "DnD5eCZ",
     "icon": "/icon.svg",
     "popover": "/",
-    "height": 600,
-    "width": 400
+    "height": 800,
+    "width": 600
   }
 }
